@@ -4,6 +4,44 @@ A `ds1302` component for `esphome`. This is a drop-in replacement of `ds1307`.
 The driver was ported from
 [esp-idf-lib](https://github.com/UncleRus/esp-idf-lib).
 
+## Usage
+
+```yaml
+# import the component from GitHub
+external_components:
+  - source:
+      type: git
+      url: https://github.com/trombik/esphome-component-ds1302
+    components:
+      - ds1302
+
+esphome:
+  name: example-esp8266
+  on_boot:
+    # read time from RTC before WiFi starts so that the display shows the time
+    # even when WiFi is not available. any value more than 200.0 (before WiFi)
+    # should work.
+    priority: 600.0
+    then:
+      ds1302.read_time:
+
+time:
+  - platform: ds1302
+    id: ds1302_time
+    # on some modules, CS is labeled as RST
+    cs_pin: D8
+    dio_pin: D7
+    clk_pin: D5
+    update_interval: never
+
+  # a time source is required
+  - platform: sntp
+    id: sntp_time
+    on_time_sync:
+      then:
+        ds1302.write_time:
+```
+
 ## Status
 
 * Works on `esp8266`
@@ -27,39 +65,9 @@ See [config/esp8266.yml](config/esp8266.yml).
 [C][wifi:037]: Setting up WiFi...
 [D][wifi:384]: Starting scan...
 [D][wifi:399]: Found networks:
-[I][wifi:442]: - 'makers' (50:C4:DD:47:2A:37) ▂▄▆█
-[D][wifi:444]:     Channel: 9
-[D][wifi:445]:     RSSI: -67 dB
-[I][wifi:442]: - 'makers' (50:C4:DD:47:2D:B5) ▂▄▆█
-[D][wifi:444]:     Channel: 11
-[D][wifi:445]:     RSSI: -82 dB
-[I][wifi:442]: - 'makers' (18:C2:BF:D2:E7:87) ▂▄▆█
-[D][wifi:444]:     Channel: 4
-[D][wifi:445]:     RSSI: -89 dB
-[D][wifi:447]: - 'Babel Floor 1' (88:DC:96:58:80:40) ▂▄▆█
-[D][wifi:447]: - 'Happy Guest House' (80:2A:A8:7B:63:11) ▂▄▆█
-[D][wifi:447]: - 'Happy Guest House' (80:2A:A8:AD:81:30) ▂▄▆█
-[D][wifi:447]: - 'CCTV ROOM' (90:F6:52:F0:B9:70) ▂▄▆█
-[D][wifi:447]: - 'Sweet Dreams 1' (4A:D9:E7:A5:EB:38) ▂▄▆█
-[D][wifi:447]: - 'Babel Guesthouse' (3C:84:6A:F8:D4:2E) ▂▄▆█
-[D][wifi:447]: - 'Happy Guest House' (80:2A:A8:AD:82:CA) ▂▄▆█
-[D][wifi:447]: - 'Happy Guest House' (80:2A:A8:7B:63:2B) ▂▄▆█
-[D][wifi:447]: - 'Happy Guest House' (80:2A:A8:7B:5E:04) ▂▄▆█
-[D][wifi:447]: - 'KC' (74:4D:28:CF:C9:F2) ▂▄▆█
-[D][wifi:447]: - 'ONLINE' (6C:3B:6B:5E:CF:BF) ▂▄▆█
-[I][wifi:255]: WiFi Connecting to 'makers'...
-[I][wifi:516]: WiFi Connected!
-[C][wifi:360]:   Local MAC: 48:3F:DA:0C:B6:8D
-[C][wifi:361]:   SSID: 'makers'
-[C][wifi:362]:   IP Address: 192.168.99.29
-[C][wifi:363]:   BSSID: 50:C4:DD:47:2A:37
-[C][wifi:365]:   Hostname: 'lobby-clock-1'
-[C][wifi:367]:   Signal strength: -72 dB ▂▄▆█
-[C][wifi:371]:   Channel: 9
-[C][wifi:372]:   Subnet: 255.255.255.0
-[C][wifi:373]:   Gateway: 192.168.99.254
-[C][wifi:374]:   DNS1: 192.168.99.251
-[C][wifi:375]:   DNS2: 0.0.0.0
+
+... snipped WiFi logs ...
+
 [C][ota:089]: Over-The-Air Updates:
 [C][ota:090]:   Address: lobby-clock-1.local:8266
 [C][ota:093]:   Using Password.
