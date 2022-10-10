@@ -6,6 +6,8 @@ The driver was ported from
 
 ## Usage
 
+See [Time](https://esphome.io/components/time.html) component.
+
 ```yaml
 # import the component from GitHub
 external_components:
@@ -124,3 +126,9 @@ See [config/esp8266.yml](config/esp8266.yml).
 [D][debug:256]: Reset Reason: External System
 [D][debug:257]: Reset Info: External System
 ```
+
+## Notes
+
+With `esphome` version 2022.9.1 as of this writing, `esphome compile` fails.
+See a workaround at
+[Issue #3348](https://github.com/esphome/issues/issues/3348).
