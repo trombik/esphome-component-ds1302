@@ -41,8 +41,8 @@
 #define DS1302_CH_BIT (1 << 7)
 #define DS1302_WP_BIT (1 << 7)
 
-#define DS1302_CH_MASK ((uint8_t) (~DS1302_CH_BIT))
-#define DS1302_WP_MASK ((uint8_t) (~DS1302_WP_BIT))
+#define DS1302_CH_MASK ((uint8_t)(~DS1302_CH_BIT))
+#define DS1302_WP_MASK ((uint8_t)(~DS1302_WP_BIT))
 
 #define DS1302_CLOCK_BURST 0xbe
 
