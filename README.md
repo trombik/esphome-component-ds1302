@@ -129,6 +129,6 @@ See [config/esp8266.yml](config/esp8266.yml).
 
 ## Notes
 
-With `esphome` version 2022.9.1 as of this writing, `esphome compile` fails.
-See a workaround at
+With `esphome` version 2022.9.1 as of this writing, `esphome compile` fails
+when the MCU is `esp8266`. See a workaround at
 [Issue #3348](https://github.com/esphome/issues/issues/3348).
