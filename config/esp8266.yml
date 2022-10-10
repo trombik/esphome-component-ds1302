@@ -1,0 +1,92 @@
+---
+# What the example does
+# ---------------------
+#
+# * read time from the DS1302 when the MCU boots and set the time
+# * start NTP client
+# * sync time on DS1302 from NTP when the NTP component updates the time
+# * display the time on TM1637
+# * once the time is synced, DS1302 keeps the time
+#
+# Prerequisites
+#
+# * NodeMCU
+# * TM1637 module for time clock display
+# * DS1302 module with a battery
+#
+# DS1302
+# ------
+#
+# CLK         -> D5
+# DIO         -> D7
+# CS (or RST) -> D8
+#
+# TM1637
+# ------
+#
+# CLK -> D1
+# DIO -> D2
+
+esphome:
+  name: example-esp8266
+  on_boot:
+    # read time from RTC before WiFi starts so that the display shows the time
+    # even when WiFi is not available. any value more than 200.0 (before WiFi)
+    # should work.
+    priority: 600.0
+    then:
+      ds1302.read_time:
+
+esp8266:
+  board: nodemcuv2
+
+logger:
+  level: debug
+
+api:
+  password: !secret api_password
+
+debug:
+  update_interval: 5s
+
+ota:
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+
+time:
+  - platform: ds1302
+    id: ds1302_time
+    cs_pin: D8
+    dio_pin: D7
+    clk_pin: D5
+    update_interval: never
+
+  - platform: sntp
+    id: sntp_time
+    on_time_sync:
+      then:
+        ds1302.write_time:
+
+display:
+  platform: tm1637
+  clk_pin: D1
+  dio_pin: D2
+  length: 4
+  update_interval: 500ms
+  intensity: 5
+  lambda: |-
+    static int i = 0;
+    i++;
+    if ((i % 2) == 0) {
+      it.strftime("%H.%M", id(sntp_time).now());
+    } else {
+      it.strftime("%H%M", id(sntp_time).now());
+    }
