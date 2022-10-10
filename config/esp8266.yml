@@ -86,7 +86,7 @@ display:
     static int i = 0;
     i++;
     if ((i % 2) == 0) {
-      it.strftime("%H.%M", id(sntp_time).now());
+      it.strftime("%H.%M", id(ds1302_time).now());
     } else {
-      it.strftime("%H%M", id(sntp_time).now());
+      it.strftime("%H%M", id(ds1302_time).now());
     }
