@@ -1,5 +1,5 @@
 ---
-name: lint
+name: lint and build
 on:
   - pull_request
   - push
