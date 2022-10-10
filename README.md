@@ -132,3 +132,6 @@ See [config/esp8266.yml](config/esp8266.yml).
 With `esphome` version 2022.9.1 as of this writing, `esphome compile` fails
 when the MCU is `esp8266`. See a workaround at
 [Issue #3348](https://github.com/esphome/issues/issues/3348).
+As such, `esphome/components/time/automation.cpp` must be patched. See
+[how](https://github.com/trombik/esphome-component-ds1302/blob/main/tox.ini#L26)
+in the `tox.ini`.
