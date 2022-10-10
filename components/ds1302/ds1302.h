@@ -115,7 +115,6 @@ class DS1302Component : public time::RealTimeClock {
     } reg;
     mutable uint8_t raw[sizeof(reg)];
   } ds1302_;
-
 };
 
 template<typename... Ts> class WriteAction : public Action<Ts...>, public Parented<DS1302Component> {

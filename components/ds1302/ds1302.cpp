@@ -31,19 +31,18 @@
  * https://github.com/UncleRus/esp-idf-lib/tree/master/components/ds1302
  */
 
-
 #include "ds1302.h"
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 
-#define DS1302_CH_REG   0x80
-#define DS1302_WP_REG   0x8e
+#define DS1302_CH_REG 0x80
+#define DS1302_WP_REG 0x8e
 
-#define DS1302_CH_BIT     (1 << 7)
-#define DS1302_WP_BIT     (1 << 7)
+#define DS1302_CH_BIT (1 << 7)
+#define DS1302_WP_BIT (1 << 7)
 
-#define DS1302_CH_MASK ((uint8_t)(~DS1302_CH_BIT))
-#define DS1302_WP_MASK ((uint8_t)(~DS1302_WP_BIT))
+#define DS1302_CH_MASK ((uint8_t) (~DS1302_CH_BIT))
+#define DS1302_WP_MASK ((uint8_t) (~DS1302_WP_BIT))
 
 #define DS1302_CLOCK_BURST 0xbe
 
@@ -125,7 +124,6 @@ void DS1302Component::write_time() {
   ds1302_.reg.ch = false;
 
   this->write_rtc_(DS1302_CLOCK_BURST, ds1302_.raw, sizeof(ds1302_.raw));
-
 }
 
 bool DS1302Component::read_rtc_() {
@@ -152,22 +150,22 @@ void DS1302Component::write_rtc_(uint8_t reg, uint8_t *src, uint8_t len) {
 }
 
 uint8_t DS1302Component::read_byte_() {
-    uint8_t byte = 0;
-    this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
-    for (uint8_t i = 0; i < 8; i++) {
-        bool val = this->dio_pin_->digital_read();
-        byte |= (val << i);
-        this->toggle_clk_();
-    }
-    return byte;
+  uint8_t byte = 0;
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+  for (uint8_t i = 0; i < 8; i++) {
+    bool val = this->dio_pin_->digital_read();
+    byte |= (val << i);
+    this->toggle_clk_();
+  }
+  return byte;
 }
 
 void DS1302Component::write_byte_(uint8_t byte) {
-    this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
-    for (uint8_t i = 0; i < 8; i++) {
-        this->dio_pin_->digital_write((byte >> i) & 1);
-        this->toggle_clk_();
-    }
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  for (uint8_t i = 0; i < 8; i++) {
+    this->dio_pin_->digital_write((byte >> i) & 1);
+    this->toggle_clk_();
+  }
 }
 
 void DS1302Component::start_(bool start) {
@@ -175,74 +173,65 @@ void DS1302Component::start_(bool start) {
 }
 
 void DS1302Component::enable_() {
-    this->cs_pin_->digital_write(false);
-    this->cs_pin_->digital_write(true);
-    delayMicroseconds(4);
+  this->cs_pin_->digital_write(false);
+  this->cs_pin_->digital_write(true);
+  delayMicroseconds(4);
 }
 
 void DS1302Component::disable_() {
-    this->cs_pin_->digital_write(true);
-    this->cs_pin_->digital_write(false);
+  this->cs_pin_->digital_write(true);
+  this->cs_pin_->digital_write(false);
 }
 
 void DS1302Component::toggle_clk_() {
-    this->clk_pin_->digital_write(true);
-    delayMicroseconds(1);
-    this->clk_pin_->digital_write(false);
-    delayMicroseconds(1);
+  this->clk_pin_->digital_write(true);
+  delayMicroseconds(1);
+  this->clk_pin_->digital_write(false);
+  delayMicroseconds(1);
 }
 
-uint8_t bcd2dec_(uint8_t val) {
-    return (val >> 4) * 10 + (val & 0x0f);
-}
+uint8_t bcd2dec_(uint8_t val) { return (val >> 4) * 10 + (val & 0x0f); }
 
-uint8_t dec2bcd_(uint8_t val) {
-    return ((val / 10) << 4) + (val % 10);
-}
+uint8_t dec2bcd_(uint8_t val) { return ((val / 10) << 4) + (val % 10); }
 
 uint8_t DS1302Component::read_register_(uint8_t reg) {
-    uint8_t val = 0;
-    this->enable_();
-    this->write_byte_(reg | 0x01);
-    val = this->read_byte_();
-    this->disable_();
-    return val;
+  uint8_t val = 0;
+  this->enable_();
+  this->write_byte_(reg | 0x01);
+  val = this->read_byte_();
+  this->disable_();
+  return val;
 }
 
 void DS1302Component::write_register_(uint8_t reg, uint8_t val) {
-    this->enable_();
-    this->write_byte_(reg);
-    this->write_byte_(val);
-    this->disable_();
+  this->enable_();
+  this->write_byte_(reg);
+  this->write_byte_(val);
+  this->disable_();
 }
 
 void DS1302Component::update_register_(uint8_t reg, uint8_t mask, uint8_t val) {
-    uint8_t r;
-    r = this->read_register_(reg);
-    this->write_register_(reg, ((r & mask) | val));
+  uint8_t r;
+  r = this->read_register_(reg);
+  this->write_register_(reg, ((r & mask) | val));
 }
 
 void DS1302Component::set_write_protect_(bool wp) {
-    this->update_register_(DS1302_WP_REG, DS1302_WP_MASK, wp ? DS1302_WP_BIT : 0);
+  this->update_register_(DS1302_WP_REG, DS1302_WP_MASK, wp ? DS1302_WP_BIT : 0);
 }
 
 void DS1302Component::burst_read_(uint8_t reg, uint8_t *dst, uint8_t len) {
-    this->enable_();
-    this->write_byte_(reg | 0x01);
-    for (uint8_t i = 0; i < len; i++, dst++) {
-        *dst = this->read_byte_();
-    }
-    this->disable_();
+  this->enable_();
+  this->write_byte_(reg | 0x01);
+  for (uint8_t i = 0; i < len; i++, dst++) {
+    *dst = this->read_byte_();
+  }
+  this->disable_();
 }
 
-uint8_t DS1302Component::bcd2dec_(uint8_t val) {
-    return (val >> 4) * 10 + (val & 0x0f);
-}
+uint8_t DS1302Component::bcd2dec_(uint8_t val) { return (val >> 4) * 10 + (val & 0x0f); }
 
-uint8_t DS1302Component::dec2bcd_(uint8_t val)
-{
-    return ((val / 10) << 4) + (val % 10);
-}
+uint8_t DS1302Component::dec2bcd_(uint8_t val) { return ((val / 10) << 4) + (val % 10); }
 
 }  // namespace ds1302
 }  // namespace esphome
