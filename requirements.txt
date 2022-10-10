@@ -1,0 +1,6 @@
+pylint==2.8.2
+flake8==3.9.2
+black==22.10.0
+esphome==2022.9.1
+pillow==9.0.1
+yamllint==1.26.3
