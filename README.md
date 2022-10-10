@@ -1,7 +1,8 @@
 # `esphome-component-ds1302`
 
-A `esphome` `ds1302` component. This is a drop-in replacement of `ds1307`. The
-driver was ported from [esp-idf-lib](https://github.com/UncleRus/esp-idf-lib).
+A `ds1302` component for `esphome`. This is a drop-in replacement of `ds1307`.
+The driver was ported from
+[esp-idf-lib](https://github.com/UncleRus/esp-idf-lib).
 
 ## Status
 
