@@ -42,11 +42,11 @@ time:
 
 ## Status
 
-* Works on `esp8266`
+* Works on `esp8266` and `esp32`
 
 ## Examples
 
-See [config/esp8266.yml](config/esp8266.yml).
+See examples under [config](config).
 
 ## Logs
 
