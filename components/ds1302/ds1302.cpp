@@ -78,7 +78,7 @@ void DS1302Component::dump_config() {
   ESP_LOGCONFIG(TAG, "  Timezone: '%s'", this->timezone_.c_str());
 }
 
-float DS1302Component::get_setup_priority() const { return setup_priority::DATA; }
+float DS1302Component::get_setup_priority() const { return setup_priority::HARDWARE; }
 
 void DS1302Component::read_time() {
   this->read_rtc_();

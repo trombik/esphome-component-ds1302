@@ -20,10 +20,6 @@ external_components:
 esphome:
   name: example-esp8266
   on_boot:
-    # read time from RTC before WiFi starts so that the display shows the time
-    # even when WiFi is not available. any value more than 200.0 (before WiFi)
-    # should work.
-    priority: 600.0
     then:
       ds1302.read_time:
 
