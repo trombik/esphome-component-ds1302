@@ -34,7 +34,7 @@
 #include "ds1302.h"
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
-#include "esphome/core/time.h
+#include "esphome/core/time.h"
 
 #define DS1302_CH_REG 0x80
 #define DS1302_WP_REG 0x8e
