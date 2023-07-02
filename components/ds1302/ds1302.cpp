@@ -34,6 +34,9 @@
 #include "ds1302.h"
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2023, 6, 0)
+#include "esphome/core/time.h"
+#endif
 
 #define DS1302_CH_REG 0x80
 #define DS1302_WP_REG 0x8e
@@ -86,6 +89,17 @@ void DS1302Component::read_time() {
     ESP_LOGW(TAG, "RTC halted, not syncing to system clock.");
     return;
   }
+/* retain backward compatibility. see https://github.com/esphome/esphome/pull/4926 */
+#if ESPHOME_VERSION_CODE > VERSION_CODE(2022, 9, 1)
+  ESPTime rtc_time{.second = uint8_t(ds1302_.reg.second + 10 * ds1302_.reg.second_10),
+                   .minute = uint8_t(ds1302_.reg.minute + 10u * ds1302_.reg.minute_10),
+                   .hour = uint8_t(ds1302_.reg.hour + 10u * ds1302_.reg.hour_10),
+                   .day_of_week = uint8_t(ds1302_.reg.weekday),
+                   .day_of_month = uint8_t(ds1302_.reg.day + 10u * ds1302_.reg.day_10),
+                   .day_of_year = 1,  // ignored by recalc_timestamp_utc(false)
+                   .month = uint8_t(ds1302_.reg.month + 10u * ds1302_.reg.month_10),
+                   .year = uint16_t(ds1302_.reg.year + 10u * ds1302_.reg.year_10 + 2000)};
+#else
   time::ESPTime rtc_time{.second = uint8_t(ds1302_.reg.second + 10 * ds1302_.reg.second_10),
                          .minute = uint8_t(ds1302_.reg.minute + 10u * ds1302_.reg.minute_10),
                          .hour = uint8_t(ds1302_.reg.hour + 10u * ds1302_.reg.hour_10),
@@ -94,6 +108,7 @@ void DS1302Component::read_time() {
                          .day_of_year = 1,  // ignored by recalc_timestamp_utc(false)
                          .month = uint8_t(ds1302_.reg.month + 10u * ds1302_.reg.month_10),
                          .year = uint16_t(ds1302_.reg.year + 10u * ds1302_.reg.year_10 + 2000)};
+#endif
   rtc_time.recalc_timestamp_utc(false);
   if (!rtc_time.is_valid()) {
     ESP_LOGE(TAG, "Invalid RTC time, not syncing to system clock.");
