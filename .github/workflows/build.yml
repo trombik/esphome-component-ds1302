@@ -26,7 +26,7 @@ jobs:
       - name: Cache tox environment
         uses: actions/cache@v3
         with:
-          path: .tox/python
+          path: .tox/py
           key: ${{ runner.os }}-tox-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-tox-
